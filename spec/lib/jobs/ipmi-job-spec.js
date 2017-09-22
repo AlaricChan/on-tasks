@@ -12,6 +12,7 @@ var uuid = require('node-uuid'),
 describe(require('path').basename(__filename), function () {
     var base = require('./base-spec');
     var pollerHelper;
+    var ipmitool;
 
     base.before(function (context) {
         // create a child injector with on-core and the base pieces we need to test this
@@ -28,6 +29,7 @@ describe(require('path').basename(__filename), function () {
         ]);
         context.Jobclass = helper.injector.get('Job.Ipmi');
         pollerHelper = helper.injector.get('JobUtils.PollerHelper');
+        ipmitool = helper.injector.get('JobUtils.Ipmitool');
     });
     before(function () {
         fs = helper.injector.get('fs');
@@ -252,8 +254,19 @@ describe(require('path').basename(__filename), function () {
                 });
         });
 
-
-
-
+        it("should have method to retrieve power status of specified node", function(){
+            expect(this.ipmi).to.have.property('retrievePowerStatus').with.length(1);
+            this.sandbox.stub(ipmitool, 'retrievePowerStatus').resolves('Chassis Power is on\n');
+            var data = {
+                host: '172.31.128.67',
+                user: 'admin',
+                password: 'admin'
+            };
+            return this.ipmi.retrievePowerStatus(data)
+                .then(function(value){
+                    console.log('Result: ' + JSON.stringify(value) + '\n');
+                    expect(value).to.have.property("power","ON");
+                });
+        });
     });
 });
