@@ -282,5 +282,14 @@ describe("ipmi-parser", function() {
             expect(parser.parseSelDataEntries(`\n------\n<<`)).to.be.empty;
         });
 
+        it('PowerStatusParser shoud handle empty input', function(){
+            var result = parser.parsePowerStatusData('');
+            expect(result).to.deep.equal({power:'Unknown'});
+        });
+
+        it('PowerStatusParser should parse input correctly', function(){
+            var result = parser.parsePowerStatusData('Chassis Power is on\n');
+            expect(result).to.deep.equal({power:'ON'});
+        });
     });
 });
