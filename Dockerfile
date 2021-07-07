@@ -1,5 +1,4 @@
 # Copyright 2016, EMC, Inc.
-
 ARG repo=rackhd
 ARG tag=devel
 
